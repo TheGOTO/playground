@@ -5,7 +5,7 @@ import csv
 process = Popen(["SoundVolumeView.exe", " /scomma", ""], stdout=PIPE)
 (output, err) = process.communicate()
 
-print (output)
+#print (output)
 
 #print output.find(",")
 
@@ -19,4 +19,9 @@ for row in spamreader:
 	pid=row[18]
 	name=row[0]
 	if pid is not "" and name is not "":
-		print row[0]+":"+row[18] 
+		print row[0]+":"+row[18]
+		
+		Popen(["nircmd.exe", "setappvolume", "/"+str(pid),"0.5"], stdout=PIPE)
+		
+		
+		
