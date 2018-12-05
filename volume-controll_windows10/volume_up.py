@@ -11,8 +11,8 @@ whd = win32gui.GetForegroundWindow()
 
 print(psutil.Process(pid).name())
 	
-call(["nircmd.exe", "changeappvolume","/"+str(pid),"0.1"])
+call(["nircmdc.exe", "changeappvolume","/"+str(pid),"0.1"])
 
-call(["nircmd.exe", "speak","text","volume up"])
+call(["nircmdc.exe", "speak","text","volume up"])
 
 

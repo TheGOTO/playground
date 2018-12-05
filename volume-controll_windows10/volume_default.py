@@ -1,15 +1,13 @@
 from subprocess import Popen, PIPE
-import csv
+import csv,sys
 
 
 process = Popen(["SoundVolumeView.exe", " /scomma", ""], stdout=PIPE)
 (output, err) = process.communicate()
 
-#print (output)
 
-#print output.find(",")
-
-#output="sere,ich"
+if sys.version[0] != '2':
+	output=output.decode("windows-1252")#set encoding for python3
 
 lines = output.splitlines()
 
@@ -19,9 +17,9 @@ for row in spamreader:
 	pid=row[18]
 	name=row[0]
 	if pid is not "" and name is not "":
-		print row[0]+":"+row[18]
+		print (pid+":"+name)
 		
-		Popen(["nircmd.exe", "setappvolume", "/"+str(pid),"0.5"], stdout=PIPE)
+		Popen(["nircmdc.exe", "setappvolume", "/"+str(pid),"0.5"], stdout=PIPE)
 		
 		
 		
