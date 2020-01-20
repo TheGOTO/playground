@@ -1,5 +1,5 @@
-# scripts
-a collection of small scripts
+# playground
+a collection of small scripts and projects
 
 
 volume-controll_x64:
