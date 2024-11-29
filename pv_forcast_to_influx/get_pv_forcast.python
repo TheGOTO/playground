@@ -1,27 +1,86 @@
-
+#https://jensd.be/1249/linux/get-started-with-influxdb-and-python-on-linux
 
 import urllib.request, json 
+from influxdb import InfluxDBClient
+import datetime
 
-url="https://api.akkudoktor.net/forecast?lat=48.54858954854686&lon=11.273298813885159&power=3870&azimuth=1&tilt=22&past_days=0&timecycle=hourly&cellCoEff=-0.4&albedo=0.2&timezone=Europe%2FBerlin&powerInverter=4000&inverterEfficiency=1&range=0&hourly=relativehumidity_2m%2Cwindspeed_10m%2Ctemperature_2m"
 
 
-def get_json():
+def get_json(url):
 	with urllib.request.urlopen(url) as content:
 		data = json.load(content)
 		#print(data)
 		return data
+
+def json_to_influx(url,string):
+
+	values=get_json(url)["values"]
+	values=values[0]
+
+
+	client = InfluxDBClient(host='localhost',
+			port=8086,
+			username='user_iobroker',
+			password='goto@1986')
+
+
+
+	for line in values:
+		wind_speed=line["windspeed_10m"]
+		power=line["dcPower"]
+		time=line["datetime"]
+		temp=line["temperature"]
+		humidity=line["relativehumidity_2m"]
+
+
+		#example time 2024-11-29T00:00:00.000+01:00
+		timestamp = int(datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%f%z').timestamp())*1000000000
+		
+		data_set = "pv_forcast,string="+string+" power="+str(power)+",wind_speed="+str(wind_speed)+",temp="+str(temp)+",humidity="+str(humidity)+" "+str(timestamp)+" "
+
+		print (data_set)
+
+		client.write([data_set], {'db': 'pv_forcast'}, 204, 'line')
+		client.close()
+	
+		
 		
 
-values=get_json()["values"]
-values=values[0]
+
+def print_json():
+
+	values=get_json()["values"]
+	values=values[0]
 
 
-for line in values:
+	for line in values:
 
-	wind_speed=line["windspeed_10m"]
-	power=line["dcPower"]
-	time=line["datetime"]
-	temp=line["temperature"]
-	humidity=line["relativehumidity_2m"]
+		wind_speed=line["windspeed_10m"]
+		power=line["dcPower"]
+		time=line["datetime"]
+		temp=line["temperature"]
+		humidity=line["relativehumidity_2m"]
 
-	print(str(temp)+":"+str(wind_speed)+":"+str(power)+":"+str(humidity)+":"+str(time))
+
+
+
+		print(str(temp)+":"+str(wind_speed)+":"+str(power)+":"+str(humidity)+":"+str(time))
+
+
+def get_url(string_power,inverter_power,orientation):
+
+	lat="48.54856552739456"
+	long="11.273336633023368"	
+
+	url="https://api.akkudoktor.net/forecast?lat="+lat+"&lon="+long+"&power="+string_power+"&azimuth="+orientation+"&tilt=22&past_days=0&timecycle=hourly&cellCoEff=-0.4&albedo=0.2&timezone=Europe%2FBerlin&powerInverter="+inverter_power+"&inverterEfficiency=1&range=0&hourly=relativehumidity_2m%2Cwindspeed_10m%2Ctemperature_2m"
+	
+	#print(url)
+	return url
+
+#get_url("3010","6000","-90")
+
+json_to_influx(get_url("3010","6000","-90"),"east")
+json_to_influx(get_url("3010","6000","90"),"west")
+json_to_influx(get_url("3870","4000","1"),"south")
+
+
