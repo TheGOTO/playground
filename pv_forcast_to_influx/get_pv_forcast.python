@@ -1,0 +1,27 @@
+
+
+import urllib.request, json 
+
+url="https://api.akkudoktor.net/forecast?lat=48.54858954854686&lon=11.273298813885159&power=3870&azimuth=1&tilt=22&past_days=0&timecycle=hourly&cellCoEff=-0.4&albedo=0.2&timezone=Europe%2FBerlin&powerInverter=4000&inverterEfficiency=1&range=0&hourly=relativehumidity_2m%2Cwindspeed_10m%2Ctemperature_2m"
+
+
+def get_json():
+	with urllib.request.urlopen(url) as content:
+		data = json.load(content)
+		#print(data)
+		return data
+		
+
+values=get_json()["values"]
+values=values[0]
+
+
+for line in values:
+
+	wind_speed=line["windspeed_10m"]
+	power=line["dcPower"]
+	time=line["datetime"]
+	temp=line["temperature"]
+	humidity=line["relativehumidity_2m"]
+
+	print(str(temp)+":"+str(wind_speed)+":"+str(power)+":"+str(humidity)+":"+str(time))
