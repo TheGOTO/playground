@@ -1,0 +1,29 @@
+// Master- und Slave-Geräte-ID
+const masterDeviceID = 0; // ID der Master-Steckdose
+const slaveDeviceID = 1; // ID der Slave-Steckdose
+// Verbrauchsgrenze in Watt
+const powerThreshold = 10; // Beispiel: 10 Watt
+
+// Funktion zum Abrufen des Stromverbrauchs des Masters
+function getMasterPower() {       
+    let status=Shelly.getComponentStatus("switch", masterDeviceID );
+    return status.apower ; // Holen des Stromverbrauchs
+}
+
+// Funktion zum Steuern des Slave-Status
+function controlSlaveBasedOnPower() {
+    let masterPower = getMasterPower();
+    //print(masterPower)
+    
+    if (masterPower > powerThreshold) {
+        // Einschalten, wenn der Verbrauch über dem Schwellwert liegt              
+        Shelly.call("Switch.set", {'id': slaveDeviceID, 'on': true});        
+        //print("slave_on");
+    } else {
+        // Ausschalten, wenn der Verbrauch unter dem Schwellwert liegt
+        Shelly.call("Switch.set", {'id': slaveDeviceID, 'on': false});
+        //print("slave_off");
+    }
+}
+
+Timer.set(1000, true, function(ud){controlSlaveBasedOnPower();},null) // run script periodicaly

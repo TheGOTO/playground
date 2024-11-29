@@ -1,0 +1,70 @@
+#https://mischianti.org/esp32-ethernet-w5500-with-plain-http-and-ssl-https/
+
+
+esphome:
+  name: pc-controller
+  friendly_name: pc_controller
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+
+# Example configuration entry
+wifi:  
+  ssid: "dom"
+  password: !secret wifi_password
+
+captive_portal:
+
+
+
+
+#ethernet:
+#  type: W5500
+#  clk_pin: GPIO18
+#  mosi_pin: GPIO23
+#  miso_pin: GPIO19
+#  cs_pin: GPIO05
+ 
+
+# Enable logging
+logger:
+  #level: VERY_VERBOSE
+
+web_server:
+  port: 80
+
+ota:
+    - platform: esphome
+
+# Enable Home Assistant API
+api:
+  #encryption:
+   # key: "9iP0U9kBOIZfwT+NIANdClbA40LN2QgVH9fMLxSpJ28="
+
+# Example configuration entry
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: GPIO14
+      inverted: true
+      mode:
+        input: true
+        pullup: true 
+    name: "PC online"
+    device_class: connectivity
+    
+
+# Example configuration entry
+output:
+  - platform: gpio
+    pin: GPIO15
+    id: pc_switch
+
+button:
+  - platform: output
+    name: "PC Switch"
+    output: pc_switch
+    duration: 500ms
