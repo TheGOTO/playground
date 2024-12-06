@@ -1,0 +1,78 @@
+#https://jensd.be/1249/linux/get-started-with-influxdb-and-python-on-linux
+
+import urllib.request, json 
+from influxdb import InfluxDBClient
+import datetime
+
+
+
+def get_json(url):
+	with urllib.request.urlopen(url) as content:
+		data = json.load(content)
+		#print(data)
+		return data
+
+def json_to_influx(url):
+
+	values=get_json(url)["values"]
+
+	print(values)
+
+	client = InfluxDBClient(host='localhost',
+			port=8086,
+			username='user_iobroker',
+			password='goto@1986')
+
+
+
+	for line in values:
+		time=line["timestamp"]
+		power=line["power"]
+		day=line["day"]
+		day_string=line["dayString"]
+
+		#example time 2024-11-29T00:00:00.000+01:00
+		timestamp = int(datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%f%z').timestamp())*1000000000
+		
+		data_set = "load_forcast power="+str(power)+" "+str(timestamp)+" "
+
+		#print (data_set)
+
+		client.write([data_set], {'db': 'load_forcast'}, 204, 'line')
+		client.close()
+	
+		
+
+def print_json():
+
+	values=get_json()["values"]
+	values=values[0]
+
+
+	for line in values:
+
+		wind_speed=line["windspeed_10m"]
+		power=line["dcPower"]
+		time=line["datetime"]
+		temp=line["temperature"]
+		humidity=line["relativehumidity_2m"]
+
+
+
+
+		print(str(temp)+":"+str(wind_speed)+":"+str(power)+":"+str(humidity)+":"+str(time))
+
+
+def get_url():
+
+
+	url="https://api.akkudoktor.net/defaultloadprofile?year=2023&consumption=5000&profile=SLPH0"
+	
+	#print(url)
+	return url
+
+#get_url("3010","6000","-90")
+
+json_to_influx(get_url())
+
+
