@@ -71,8 +71,11 @@ def get_url(string_power,inverter_power,orientation):
 
 	lat="48.54856552739456"
 	long="11.273336633023368"	
+	#timezone="Europe%2FBerlin"
+	timezone="Etc%2FGMT0"
 
-	url="https://api.akkudoktor.net/forecast?lat="+lat+"&lon="+long+"&power="+string_power+"&azimuth="+orientation+"&tilt=22&past_days=0&timecycle=hourly&cellCoEff=-0.4&albedo=0.2&timezone=Europe%2FBerlin&powerInverter="+inverter_power+"&inverterEfficiency=1&range=0&hourly=relativehumidity_2m%2Cwindspeed_10m%2Ctemperature_2m"
+	#url="https://api.akkudoktor.net/forecast?lat="+lat+"&lon="+long+"&power="+string_power+"&azimuth="+orientation+"&tilt=22&past_days=0&timecycle=hourly&cellCoEff=-0.4&albedo=0.2&timezone=Europe%2FBerlin&powerInverter="+inverter_power+"&inverterEfficiency=1&range=0&hourly=relativehumidity_2m%2Cwindspeed_10m%2Ctemperature_2m"
+	url="https://api.akkudoktor.net/forecast?lat="+lat+"&lon="+long+"&power="+string_power+"&azimuth="+orientation+"&tilt=22&past_days=0&timecycle=hourly&cellCoEff=-0.4&albedo=0.2&timezone="+timezone+"&powerInverter="+inverter_power+"&inverterEfficiency=1&range=0&hourly=relativehumidity_2m%2Cwindspeed_10m%2Ctemperature_2m"
 	
 	#print(url)
 	return url
