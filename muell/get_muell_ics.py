@@ -60,6 +60,7 @@ def add_events(c,elements,name):
 		e = Event()
 		e.name = name
 		e.begin = element
+		e.make_all_day()
 		c.events.add(e)
 	return c
 
@@ -67,7 +68,7 @@ c = Calendar()
 
 c=add_events(c,array_blau,"blau Tonne")
 c=add_events(c,array_gelb,"gelbe Tonne")
-c=add_events(c,array_braun,"Bio Tonne")
+c=add_events(c,array_braun,"bio Tonne")
 c=add_events(c,array_grau,"schwarze Tonne")
 
 #print(c.events)
